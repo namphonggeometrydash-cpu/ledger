@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useOutletContext } from "react-router-dom";
 
 const LENGTHS = [
   { label: "25 min", mins: 25 },
@@ -9,7 +10,8 @@ const LENGTHS = [
 const RADIUS = 96;
 const CIRC = 2 * Math.PI * RADIUS;
 
-export default function Focus({ data }) {
+export default function Focus() {
+  const data = useOutletContext();
   const { logSession, sessions, goals, weekMinutes } = data;
   const [lengthMins, setLengthMins] = useState(25);
   const [secondsLeft, setSecondsLeft] = useState(25 * 60);

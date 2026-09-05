@@ -1,6 +1,9 @@
+import { useOutletContext, useNavigate } from "react-router-dom";
 import TaskRow from "./TaskRow";
 
-export default function Dashboard({ data, onNavigate }) {
+export default function Dashboard() {
+  const data = useOutletContext();
+  const navigate = useNavigate();
   const { rankedTasks, weekMinutes, streakDays, goals, sessions, cycleStatus, inbox } = data;
   const today = new Date().toISOString().slice(0, 10);
   const dueToday = rankedTasks.filter((t) => t.dueDate === today).length;
@@ -40,7 +43,7 @@ export default function Dashboard({ data, onNavigate }) {
         <div className="callout">
           Ledger flagged {suspicious} message{suspicious > 1 ? "s" : ""} in your inbox that look
           like spam or phishing.{" "}
-          <button className="linklike" onClick={() => onNavigate("inbox")} style={{ textDecoration: "underline" }}>
+          <button className="linklike" onClick={() => navigate("/app/inbox")} style={{ textDecoration: "underline" }}>
             Review inbox
           </button>
         </div>
@@ -50,7 +53,7 @@ export default function Dashboard({ data, onNavigate }) {
         <div>
           <div className="panel-title">
             <span>Suggested order</span>
-            <button className="linklike" onClick={() => onNavigate("tasks")}>
+            <button className="linklike" onClick={() => navigate("/app/tasks")}>
               See all tasks
             </button>
           </div>
@@ -65,7 +68,7 @@ export default function Dashboard({ data, onNavigate }) {
         <div>
           <div className="panel-title">
             <span>Weekly goals</span>
-            <button className="linklike" onClick={() => onNavigate("focus")}>
+            <button className="linklike" onClick={() => navigate("/app/focus")}>
               Start a session
             </button>
           </div>

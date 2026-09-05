@@ -1,6 +1,8 @@
+import { useOutletContext } from "react-router-dom";
 import { scoreMessage } from "../lib/spamHeuristic";
 
-export default function Inbox({ data }) {
+export default function Inbox() {
+  const data = useOutletContext();
   const { inbox, dismissMail } = data;
   const suspiciousCount = inbox.filter((m) => m.flag === "suspicious").length;
 

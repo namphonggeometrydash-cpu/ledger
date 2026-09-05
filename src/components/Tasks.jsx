@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useOutletContext } from "react-router-dom";
 import TaskRow from "./TaskRow";
 
 const FILTERS = ["all", "todo", "doing", "done"];
 
-export default function Tasks({ data }) {
+export default function Tasks() {
+  const data = useOutletContext();
   const { tasks, addTask, deleteTask, cycleStatus } = data;
   const [filter, setFilter] = useState("all");
   const [title, setTitle] = useState("");
