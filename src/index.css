@@ -1,0 +1,71 @@
+:root {
+  --paper: #eef0ec;
+  --paper-raised: #f6f7f4;
+  --ink: #1f2a24;
+  --ink-soft: #55645a;
+  --ink-faint: #8a9389;
+  --line: #d7dbd1;
+  --line-strong: #b9c0b3;
+  --amber: #c68a3d;
+  --amber-soft: #f1decb;
+  --moss: #52704f;
+  --moss-soft: #dde6d5;
+  --rust: #a3523b;
+  --rust-soft: #f0d9d0;
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --radius: 3px;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  margin: 0;
+  color: var(--ink);
+}
+
+button {
+  font-family: inherit;
+}
+
+button:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

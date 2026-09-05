@@ -1,0 +1,553 @@
+/* ---------- Shell ---------- */
+.shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.rail {
+  width: 232px;
+  flex-shrink: 0;
+  background: var(--paper-raised);
+  border-right: 1px solid var(--line);
+  padding: 28px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.rail-mark {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 0 8px;
+}
+
+.rail-mark-glyph {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--amber);
+}
+
+.rail-mark-word {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.rail-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rail-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius);
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-left: 2px solid transparent;
+}
+
+.rail-item svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+.rail-item:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.rail-item.active {
+  color: var(--ink);
+  background: var(--paper);
+  border-left: 2px solid var(--amber);
+  font-weight: 600;
+}
+
+.rail-foot {
+  margin-top: auto;
+  padding: 0 8px;
+  font-size: 12px;
+  color: var(--ink-faint);
+  line-height: 1.5;
+}
+
+.shell-main {
+  flex: 1;
+  min-width: 0;
+  padding: 40px 48px 64px;
+  max-width: 1040px;
+}
+
+/* ---------- Page header ---------- */
+.page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.page-head h1 {
+  font-size: 28px;
+}
+
+.page-head p {
+  margin: 6px 0 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.stat-row {
+  display: flex;
+  gap: 22px;
+}
+
+.stat {
+  text-align: right;
+}
+
+.stat .n {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.stat .l {
+  font-size: 11.5px;
+  color: var(--ink-faint);
+}
+
+/* ---------- Two column layout ---------- */
+.two-col {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+  margin: 0 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-title a,
+.panel-title button.linklike {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-faint);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.panel-title a:hover,
+.panel-title button.linklike:hover {
+  color: var(--ink);
+}
+
+/* ---------- Ruled task list ---------- */
+.ruled-list {
+  border-top: 1px solid var(--line-strong);
+}
+
+.task-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 13px 2px;
+  border-bottom: 1px solid var(--line);
+}
+
+.task-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-strong);
+  background: var(--paper-raised);
+  flex-shrink: 0;
+  margin-top: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.task-check.doing {
+  border-color: var(--amber);
+  background: var(--amber-soft);
+}
+
+.task-check.done {
+  border-color: var(--moss);
+  background: var(--moss);
+}
+
+.task-check.done::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--paper-raised);
+}
+
+.task-check.doing::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--amber);
+}
+
+.task-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-title {
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
+.task-row.done .task-title {
+  color: var(--ink-faint);
+  text-decoration: line-through;
+  text-decoration-color: var(--line-strong);
+}
+
+.task-meta {
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--ink-faint);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.task-due {
+  font-family: var(--font-mono);
+}
+
+.task-due.overdue {
+  color: var(--rust);
+}
+
+.tag {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.tag.high {
+  background: var(--rust-soft);
+  color: var(--rust);
+}
+
+.tag.medium {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.tag.low {
+  background: var(--moss-soft);
+  color: var(--moss);
+}
+
+.task-delete {
+  border: none;
+  background: none;
+  color: var(--ink-faint);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 4px;
+  opacity: 0;
+}
+
+.task-row:hover .task-delete {
+  opacity: 1;
+}
+
+.task-delete:hover {
+  color: var(--rust);
+}
+
+.empty-note {
+  padding: 20px 2px;
+  color: var(--ink-faint);
+  font-size: 13.5px;
+}
+
+/* ---------- Add task form ---------- */
+.add-task-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.add-task-form input[type="text"] {
+  flex: 1;
+  min-width: 160px;
+}
+
+.add-task-form input,
+.add-task-form select {
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  padding: 9px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+  color: var(--ink);
+}
+
+.add-task-form button {
+  padding: 9px 16px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.add-task-form button:hover {
+  opacity: 0.88;
+}
+
+/* ---------- Focus timer ---------- */
+.timer-card {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.timer-dial {
+  position: relative;
+  width: 220px;
+  height: 220px;
+}
+
+.timer-dial svg {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+
+.timer-dial-time {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 40px;
+  color: var(--ink);
+}
+
+.timer-dial-label {
+  font-size: 11.5px;
+  color: var(--ink-faint);
+  margin-top: 4px;
+  font-family: var(--font-body);
+}
+
+.timer-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.timer-btn {
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.timer-btn.primary {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: #fff;
+}
+
+.timer-btn:hover {
+  opacity: 0.9;
+}
+
+.timer-lengths {
+  display: flex;
+  gap: 8px;
+}
+
+.timer-lengths button {
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+
+.timer-lengths button.active {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+/* ---------- Goal ruler ---------- */
+.goal-row {
+  margin-bottom: 16px;
+}
+
+.goal-row-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.goal-row-top .amt {
+  font-family: var(--font-mono);
+  color: var(--ink-soft);
+}
+
+.ruler {
+  height: 8px;
+  background: var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ruler-fill {
+  height: 100%;
+  background: var(--moss);
+  border-radius: 4px;
+}
+
+/* ---------- Inbox ---------- */
+.mail-row {
+  display: flex;
+  gap: 14px;
+  padding: 16px 2px;
+  border-bottom: 1px solid var(--line);
+  align-items: flex-start;
+}
+
+.mail-flag {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.mail-flag.safe {
+  background: var(--moss);
+}
+
+.mail-flag.suspicious {
+  background: var(--rust);
+}
+
+.mail-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.mail-from {
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+}
+
+.mail-subject {
+  font-size: 14.5px;
+  font-weight: 500;
+  margin: 2px 0 3px;
+}
+
+.mail-preview {
+  font-size: 13px;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mail-warning {
+  margin-top: 8px;
+  display: inline-block;
+  font-size: 12px;
+  color: var(--rust);
+  background: var(--rust-soft);
+  padding: 3px 9px;
+  border-radius: 10px;
+}
+
+.mail-dismiss {
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  color: var(--ink-soft);
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.mail-dismiss:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.callout {
+  background: var(--amber-soft);
+  border-radius: 6px;
+  padding: 16px 18px;
+  font-size: 13.5px;
+  color: #6b4a1f;
+  margin-bottom: 20px;
+  line-height: 1.55;
+}
