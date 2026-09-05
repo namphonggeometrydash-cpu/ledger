@@ -25,7 +25,7 @@ const ICONS = {
   ),
 };
 
-export default function Rail({ page, onNavigate, pages }) {
+export default function Rail({ page, onNavigate, pages, user, onLogout }) {
   return (
     <nav className="rail">
       <div className="rail-mark">
@@ -45,9 +45,15 @@ export default function Rail({ page, onNavigate, pages }) {
         ))}
       </div>
       <div className="rail-foot">
-        Connected to Canvas &amp; Gmail
-        <br />
-        will unlock in a later step.
+        {user && (
+          <>
+            Signed in as <strong style={{ color: "var(--ink-soft)" }}>{user.name}</strong>
+            <br />
+            <button className="linklike" style={{ marginTop: 6 }} onClick={onLogout}>
+              Sign out
+            </button>
+          </>
+        )}
       </div>
     </nav>
   );

@@ -1,10 +1,5 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
-
-const STORAGE_KEY = "ledger.v1";
-
-function uid() {
-  return Math.random().toString(36).slice(2, 10);
-}
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { api } from "../lib/api";
 
 function isoInDays(days) {
   const d = new Date();
@@ -12,185 +7,89 @@ function isoInDays(days) {
   return d.toISOString().slice(0, 10);
 }
 
-const SEED = {
-  tasks: [
-    {
-      id: uid(),
-      title: "Draft essay: Rise of the novel",
-      course: "English Lit",
-      dueDate: isoInDays(1),
-      priority: "high",
-      status: "todo",
-      estimateMins: 60,
-      source: "canvas",
-    },
-    {
-      id: uid(),
-      title: "Problem set 4 — integrals",
-      course: "Calculus II",
-      dueDate: isoInDays(2),
-      priority: "high",
-      status: "todo",
-      estimateMins: 45,
-      source: "classroom",
-    },
-    {
-      id: uid(),
-      title: "Read chapter 6, annotate",
-      course: "World History",
-      dueDate: isoInDays(3),
-      priority: "medium",
-      status: "todo",
-      estimateMins: 30,
-      source: "manual",
-    },
-    {
-      id: uid(),
-      title: "Lab report: titration results",
-      course: "Chemistry",
-      dueDate: isoInDays(0),
-      priority: "high",
-      status: "doing",
-      estimateMins: 50,
-      source: "canvas",
-    },
-    {
-      id: uid(),
-      title: "Vocabulary quiz review",
-      course: "Spanish III",
-      dueDate: isoInDays(5),
-      priority: "low",
-      status: "todo",
-      estimateMins: 20,
-      source: "manual",
-    },
-    {
-      id: uid(),
-      title: "Group project outline",
-      course: "World History",
-      dueDate: isoInDays(-1),
-      priority: "medium",
-      status: "done",
-      estimateMins: 40,
-      source: "classroom",
-    },
-  ],
-  sessions: [
-    { id: uid(), date: isoInDays(-2), durationMins: 25 },
-    { id: uid(), date: isoInDays(-2), durationMins: 25 },
-    { id: uid(), date: isoInDays(-1), durationMins: 50 },
-    { id: uid(), date: isoInDays(0), durationMins: 25 },
-  ],
-  goals: [
-    { id: uid(), label: "Deep focus time", targetMinsPerWeek: 300 },
-    { id: uid(), label: "Reading", targetMinsPerWeek: 120 },
-  ],
-  inbox: [
-    {
-      id: uid(),
-      from: "registrar@school.edu",
-      subject: "Add/drop deadline moved to Friday",
-      preview: "The last day to modify your schedule without penalty is now...",
-      flag: "safe",
-      receivedAt: isoInDays(0),
-    },
-    {
-      id: uid(),
-      from: "prize-notify@free-giftcards.win",
-      subject: "You have WON a $500 gift card!! Claim NOW",
-      preview: "Congratulations!! Click the link below within 24 hours to claim your reward...",
-      flag: "suspicious",
-      receivedAt: isoInDays(0),
-    },
-    {
-      id: uid(),
-      from: "prof.alvarez@school.edu",
-      subject: "Office hours moved to Thursday",
-      preview: "Just a heads up that this week's office hours will be held on Thursday instead...",
-      flag: "safe",
-      receivedAt: isoInDays(-1),
-    },
-    {
-      id: uid(),
-      from: "no-reply@campus-verify-secure.com",
-      subject: "Action required: verify your student account",
-      preview: "Your account will be suspended unless you confirm your login within 12 hours...",
-      flag: "suspicious",
-      receivedAt: isoInDays(-1),
-    },
-  ],
-};
-
-function load() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return structuredClone(SEED);
-    const parsed = JSON.parse(raw);
-    return { ...structuredClone(SEED), ...parsed };
-  } catch {
-    return structuredClone(SEED);
-  }
-}
-
 export function useAppData() {
-  const [data, setData] = useState(load);
+  const [tasks, setTasks] = useState([]);
+  const [sessions, setSessions] = useState([]);
+  const [goals, setGoals] = useState([]);
+  const [inbox, setInbox] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const refreshAll = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const [t, s, g, m] = await Promise.all([
+        api.tasks.list(),
+        api.sessions.list(),
+        api.goals.list(),
+        api.inbox.list(),
+      ]);
+      setTasks(t);
+      setSessions(s);
+      setGoals(g);
+      setInbox(m);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  }, [data]);
+    refreshAll();
+  }, [refreshAll]);
 
-  const addTask = useCallback((task) => {
-    setData((d) => ({
-      ...d,
-      tasks: [
-        { id: uid(), status: "todo", priority: "medium", source: "manual", ...task },
-        ...d.tasks,
-      ],
-    }));
+  const addTask = useCallback(async (task) => {
+    const created = await api.tasks.create(task);
+    setTasks((prev) => [created, ...prev]);
   }, []);
 
-  const updateTask = useCallback((id, patch) => {
-    setData((d) => ({
-      ...d,
-      tasks: d.tasks.map((t) => (t.id === id ? { ...t, ...patch } : t)),
-    }));
+  const updateTask = useCallback(async (id, patch) => {
+    const updated = await api.tasks.update(id, patch);
+    setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
   }, []);
 
-  const deleteTask = useCallback((id) => {
-    setData((d) => ({ ...d, tasks: d.tasks.filter((t) => t.id !== id) }));
+  const deleteTask = useCallback(async (id) => {
+    await api.tasks.remove(id);
+    setTasks((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const cycleStatus = useCallback((id) => {
-    const order = ["todo", "doing", "done"];
-    setData((d) => ({
-      ...d,
-      tasks: d.tasks.map((t) =>
-        t.id === id
-          ? { ...t, status: order[(order.indexOf(t.status) + 1) % order.length] }
-          : t
-      ),
-    }));
+  const cycleStatus = useCallback(
+    async (id) => {
+      const order = ["todo", "doing", "done"];
+      const current = tasks.find((t) => t.id === id);
+      if (!current) return;
+      const next = order[(order.indexOf(current.status) + 1) % order.length];
+      // Optimistic update so the checkbox feels instant.
+      setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, status: next } : t)));
+      try {
+        await api.tasks.update(id, { status: next });
+      } catch {
+        setTasks((prev) => prev.map((t) => (t.id === id ? current : t)));
+      }
+    },
+    [tasks]
+  );
+
+  const logSession = useCallback(async (durationMins) => {
+    const created = await api.sessions.create(durationMins);
+    setSessions((prev) => [created, ...prev]);
   }, []);
 
-  const logSession = useCallback((durationMins) => {
-    setData((d) => ({
-      ...d,
-      sessions: [
-        { id: uid(), date: new Date().toISOString().slice(0, 10), durationMins },
-        ...d.sessions,
-      ],
-    }));
-  }, []);
+  const dismissMail = useCallback(async (id) => {
+    setInbox((prev) => prev.filter((m) => m.id !== id));
+    try {
+      await api.inbox.dismiss(id);
+    } catch {
+      refreshAll();
+    }
+  }, [refreshAll]);
 
-  const dismissMail = useCallback((id) => {
-    setData((d) => ({ ...d, inbox: d.inbox.filter((m) => m.id !== id) }));
-  }, []);
-
-  // Priority score used to auto-rank tasks: overdue/urgent + importance first.
   const rankedTasks = useMemo(() => {
     const weight = { high: 3, medium: 2, low: 1 };
     const today = new Date().toISOString().slice(0, 10);
-    return [...data.tasks]
+    return [...tasks]
       .filter((t) => t.status !== "done")
       .sort((a, b) => {
         const aOverdue = a.dueDate < today ? 1 : 0;
@@ -199,40 +98,43 @@ export function useAppData() {
         if (a.dueDate !== b.dueDate) return a.dueDate < b.dueDate ? -1 : 1;
         return weight[b.priority] - weight[a.priority];
       });
-  }, [data.tasks]);
+  }, [tasks]);
 
   const weekMinutes = useMemo(() => {
     const cutoff = isoInDays(-7);
-    return data.sessions
+    return sessions
       .filter((s) => s.date >= cutoff)
       .reduce((sum, s) => sum + s.durationMins, 0);
-  }, [data.sessions]);
+  }, [sessions]);
 
   const streakDays = useMemo(() => {
-    const days = new Set(data.sessions.map((s) => s.date));
+    const days = new Set(sessions.map((s) => s.date));
     let streak = 0;
     for (let i = 0; i < 60; i++) {
       const day = isoInDays(-i);
       if (days.has(day)) streak++;
-      else if (i === 0) continue; // today may not have a session yet
+      else if (i === 0) continue;
       else break;
     }
     return streak;
-  }, [data.sessions]);
+  }, [sessions]);
 
   return {
-    tasks: data.tasks,
+    tasks,
     rankedTasks,
-    sessions: data.sessions,
-    goals: data.goals,
-    inbox: data.inbox,
+    sessions,
+    goals,
+    inbox,
     weekMinutes,
     streakDays,
+    loading,
+    error,
     addTask,
     updateTask,
     deleteTask,
     cycleStatus,
     logSession,
     dismissMail,
+    refreshAll,
   };
 }
