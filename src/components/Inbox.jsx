@@ -1,10 +1,11 @@
-import { useOutletContext } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
 import { scoreMessage } from "../lib/spamHeuristic";
 
 export default function Inbox() {
   const data = useOutletContext();
   const { inbox, dismissMail } = data;
   const suspiciousCount = inbox.filter((m) => m.flag === "suspicious").length;
+  const isLive = inbox.length > 0 && inbox[0].live;
 
   return (
     <>
@@ -25,16 +26,22 @@ export default function Inbox() {
         </div>
       </div>
 
-      <div className="callout">
-        This view runs on a connected Gmail account in the full version (via Google OAuth, read-only
-        scope). Here it works on sample mail using an explainable rule-based scan — every flag below
-        shows the exact signal that tripped it.
-      </div>
+      {isLive ? (
+        <div className="callout">Connected to your real Gmail — these are your actual recent messages.</div>
+      ) : (
+        <div className="callout">
+          This is sample mail. <Link to="/app/connections">Connect your Gmail</Link> on the
+          Connections page to scan your real inbox instead.
+        </div>
+      )}
 
       <div className="ruled-list">
         {inbox.length === 0 && <p className="empty-note">Inbox clear.</p>}
         {inbox.map((mail) => {
-          const { reasons, suspicious } = scoreMessage(mail);
+          const scored = mail.reasons
+            ? { reasons: mail.reasons, suspicious: mail.flag === "suspicious" }
+            : scoreMessage(mail);
+          const { reasons, suspicious } = scored;
           return (
             <div className="mail-row" key={mail.id}>
               <span className={`mail-flag ${suspicious ? "suspicious" : "safe"}`} />
@@ -46,9 +53,11 @@ export default function Inbox() {
                   <div className="mail-warning">Flagged: {reasons[0]}</div>
                 )}
               </div>
-              <button className="mail-dismiss" onClick={() => dismissMail(mail.id)}>
-                Dismiss
-              </button>
+              {!isLive && (
+                <button className="mail-dismiss" onClick={() => dismissMail(mail.id)}>
+                  Dismiss
+                </button>
+              )}
             </div>
           );
         })}

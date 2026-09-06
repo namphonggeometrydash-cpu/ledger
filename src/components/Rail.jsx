@@ -40,6 +40,17 @@ const NAV = [
       </svg>
     ),
   },
+  {
+    to: "/app/connections",
+    label: "Connections",
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M7 13 13 7" strokeLinecap="round" />
+        <path d="M8.5 4.5 6 7a3 3 0 0 0 4 4.5l2.5-2.5" strokeLinecap="round" />
+        <path d="M11.5 15.5 14 13a3 3 0 0 0-4-4.5L7.5 11" strokeLinecap="round" />
+      </svg>
+    ),
+  },
 ];
 
 export default function Rail({ user, onLogout }) {

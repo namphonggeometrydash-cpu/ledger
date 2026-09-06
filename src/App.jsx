@@ -7,6 +7,7 @@ import Dashboard from "./components/Dashboard";
 import Tasks from "./components/Tasks";
 import Focus from "./components/Focus";
 import Inbox from "./components/Inbox";
+import Connections from "./components/Connections";
 import "./app.css";
 
 function RequireAuth({ children }) {
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="tasks" element={<Tasks />} />
         <Route path="focus" element={<Focus />} />
         <Route path="inbox" element={<Inbox />} />
+        <Route path="connections" element={<Connections />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

@@ -9,6 +9,7 @@ const taskRoutes = require("./routes/tasks");
 const sessionRoutes = require("./routes/sessions");
 const goalRoutes = require("./routes/goals");
 const mailRoutes = require("./routes/mail");
+const integrationRoutes = require("./routes/integrations");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -41,6 +42,7 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/goals", goalRoutes);
 app.use("/api/inbox", mailRoutes);
+app.use("/api/integrations", integrationRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: "Not found" });

@@ -58,8 +58,51 @@ function createUser({ email, name, passwordHash = null, googleId = null }) {
     passwordHash,
     googleId,
     createdAt: new Date().toISOString(),
+    // Integrations — all optional, absent/null means "not connected".
+    canvas: null, // { domain, token }
+    google: null, // { accessToken, refreshToken, expiryDate, scopes, email }
   };
   state.users.push(user);
+  persist();
+  return user;
+}
+
+function saveCanvasConnection(userId, { domain, token }) {
+  const user = findUserById(userId);
+  if (!user) return null;
+  user.canvas = { domain, token };
+  persist();
+  return user;
+}
+
+function clearCanvasConnection(userId) {
+  const user = findUserById(userId);
+  if (!user) return null;
+  user.canvas = null;
+  persist();
+  return user;
+}
+
+function saveGoogleTokens(userId, { accessToken, refreshToken, expiryDate, scopes, email }) {
+  const user = findUserById(userId);
+  if (!user) return null;
+  user.google = {
+    accessToken,
+    // Google only sends a refresh token on the very first consent —
+    // keep the old one if a later exchange doesn't include a new one.
+    refreshToken: refreshToken || user.google?.refreshToken || null,
+    expiryDate,
+    scopes,
+    email,
+  };
+  persist();
+  return user;
+}
+
+function clearGoogleConnection(userId) {
+  const user = findUserById(userId);
+  if (!user) return null;
+  user.google = null;
   persist();
   return user;
 }
@@ -89,13 +132,18 @@ function createTask(userId, data) {
     course: data.course || "General",
     dueDate: data.dueDate,
     priority: data.priority || "medium",
-    status: "todo",
+    status: data.status || "todo",
     estimateMins: data.estimateMins || 30,
-    source: "manual",
+    source: data.source || "manual",
+    sourceId: data.sourceId || null, // used to avoid duplicate imports from Canvas etc.
   };
   state.tasks.push(task);
   persist();
   return task;
+}
+
+function findTaskBySourceId(userId, source, sourceId) {
+  return state.tasks.find((t) => t.userId === userId && t.source === source && t.sourceId === sourceId) || null;
 }
 
 function updateTask(userId, id, patch) {
@@ -195,8 +243,13 @@ module.exports = {
   findUserById,
   createUser,
   linkGoogleId,
+  saveCanvasConnection,
+  clearCanvasConnection,
+  saveGoogleTokens,
+  clearGoogleConnection,
   listTasks,
   createTask,
+  findTaskBySourceId,
   updateTask,
   deleteTask,
   listSessions,

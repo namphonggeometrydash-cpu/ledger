@@ -74,4 +74,14 @@ export const api = {
     list: () => request("/inbox"),
     dismiss: (id) => request(`/inbox/${id}`, { method: "DELETE" }),
   },
+  integrations: {
+    status: () => request("/integrations/status"),
+    connectCanvas: (domain, canvasToken) =>
+      request("/integrations/canvas", { method: "POST", body: JSON.stringify({ domain, token: canvasToken }) }),
+    disconnectCanvas: () => request("/integrations/canvas", { method: "DELETE" }),
+    syncCanvas: () => request("/integrations/canvas/sync", { method: "POST" }),
+    googleStartUrl: () => `${BASE_URL}/integrations/google/start?token=${encodeURIComponent(token || "")}`,
+    disconnectGoogle: () => request("/integrations/google", { method: "DELETE" }),
+    calendarEvents: () => request("/integrations/calendar/events"),
+  },
 };
