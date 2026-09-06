@@ -34,12 +34,6 @@ function nextId() {
   return id;
 }
 
-function isoInDays(days) {
-  const d = new Date();
-  d.setDate(d.getDate() + days);
-  return d.toISOString().slice(0, 10);
-}
-
 // ---------- users ----------
 
 function findUserByEmail(email) {
@@ -105,6 +99,15 @@ function clearGoogleConnection(userId) {
   user.google = null;
   persist();
   return user;
+}
+
+function deleteUser(userId) {
+  state.users = state.users.filter((u) => u.id !== userId);
+  state.tasks = state.tasks.filter((t) => t.userId !== userId);
+  state.sessions = state.sessions.filter((s) => s.userId !== userId);
+  state.goals = state.goals.filter((g) => g.userId !== userId);
+  state.mail = state.mail.filter((m) => m.userId !== userId);
+  persist();
 }
 
 function linkGoogleId(userId, googleId) {
@@ -212,29 +215,11 @@ function deleteMail(userId, id) {
 // ---------- seed data for a brand new account ----------
 
 function seedForUser(userId) {
-  const tasks = [
-    { title: "Draft essay: Rise of the novel", course: "English Lit", dueDate: isoInDays(1), priority: "high", status: "todo", estimateMins: 60, source: "canvas" },
-    { title: "Problem set 4 — integrals", course: "Calculus II", dueDate: isoInDays(2), priority: "high", status: "todo", estimateMins: 45, source: "classroom" },
-    { title: "Read chapter 6, annotate", course: "World History", dueDate: isoInDays(3), priority: "medium", status: "todo", estimateMins: 30, source: "manual" },
-    { title: "Lab report: titration results", course: "Chemistry", dueDate: isoInDays(0), priority: "high", status: "doing", estimateMins: 50, source: "canvas" },
-    { title: "Vocabulary quiz review", course: "Spanish III", dueDate: isoInDays(5), priority: "low", status: "todo", estimateMins: 20, source: "manual" },
-  ];
-  for (const t of tasks) state.tasks.push({ id: nextId(), userId, ...t });
-
-  state.sessions.push({ id: nextId(), userId, date: isoInDays(-2), durationMins: 25 });
-  state.sessions.push({ id: nextId(), userId, date: isoInDays(-1), durationMins: 50 });
-
+  // No sample tasks or mail anymore — new accounts start clean, and the
+  // empty states point people at the Connections tab instead of showing
+  // fake data that looks real. Keep sensible default weekly goals only.
   state.goals.push({ id: nextId(), userId, label: "Deep focus time", targetMinsPerWeek: 300 });
   state.goals.push({ id: nextId(), userId, label: "Reading", targetMinsPerWeek: 120 });
-
-  const mail = [
-    { from: "registrar@school.edu", subject: "Add/drop deadline moved to Friday", preview: "The last day to modify your schedule without penalty is now...", flag: "safe", receivedAt: isoInDays(0) },
-    { from: "prize-notify@free-giftcards.win", subject: "You have WON a $500 gift card!! Claim NOW", preview: "Congratulations!! Click the link below within 24 hours to claim your reward...", flag: "suspicious", receivedAt: isoInDays(0) },
-    { from: "prof.alvarez@school.edu", subject: "Office hours moved to Thursday", preview: "Just a heads up that this week's office hours will be held on Thursday instead...", flag: "safe", receivedAt: isoInDays(-1) },
-    { from: "no-reply@campus-verify-secure.com", subject: "Action required: verify your student account", preview: "Your account will be suspended unless you confirm your login within 12 hours...", flag: "suspicious", receivedAt: isoInDays(-1) },
-  ];
-  for (const m of mail) state.mail.push({ id: nextId(), userId, ...m, from: m.from });
-
   persist();
 }
 
@@ -247,6 +232,7 @@ module.exports = {
   clearCanvasConnection,
   saveGoogleTokens,
   clearGoogleConnection,
+  deleteUser,
   listTasks,
   createTask,
   findTaskBySourceId,

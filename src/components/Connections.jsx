@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { api } from "../lib/api";
 
 export default function Connections() {
+  const { user } = useAuth();
   const [params, setParams] = useSearchParams();
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -86,6 +88,24 @@ export default function Connections() {
           </div>
         </div>
         <p className="empty-note">Loading…</p>
+      </>
+    );
+  }
+
+  if (!status) {
+    return (
+      <>
+        <div className="page-head">
+          <div>
+            <h1>Connections</h1>
+          </div>
+        </div>
+        <div className="auth-error" style={{ marginBottom: 16 }}>
+          {notice || "Couldn't load your connection status."}
+        </div>
+        <button className="timer-btn" onClick={loadStatus}>
+          Try again
+        </button>
       </>
     );
   }
@@ -182,9 +202,22 @@ export default function Connections() {
               Requests read-only access to your Calendar and Gmail — Ledger never sends email or
               edits your calendar on your behalf.
             </p>
-            <a className="timer-btn primary" style={{ textDecoration: "none", display: "inline-block" }} href={api.integrations.googleStartUrl()}>
-              Connect Google Calendar &amp; Gmail
-            </a>
+            <div className="google-chooser">
+              <a className="google-chooser-option" href={api.integrations.googleStartUrl(user?.email)}>
+                <span className="google-chooser-avatar">{user?.name?.[0]?.toUpperCase() || "?"}</span>
+                <span>
+                  <strong>Use current email</strong>
+                  <span className="google-chooser-sub">{user?.email}</span>
+                </span>
+              </a>
+              <a className="google-chooser-option" href={api.integrations.googleStartUrl()}>
+                <span className="google-chooser-avatar alt">+</span>
+                <span>
+                  <strong>Choose another one</strong>
+                  <span className="google-chooser-sub">Sign in with a different Google account</span>
+                </span>
+              </a>
+            </div>
           </>
         )}
       </div>

@@ -62,18 +62,36 @@ network problem, not a login problem. Check, in order:
    failed request's exact URL and status — that tells you immediately
    whether it's a wrong port, a 404, or something else.
 
-## What's working now (Phase 3)
+## What's working now
 
-- **Public home page** at `/` — no login wall. "Get started" and "Sign
-  in" lead to `/login`.
+- **Public home page** at `/` — no login wall, with an animated background
+  and the Ledger logo. "Get started" and "Sign in" lead to `/login`.
 - **Accounts** — register/log in with email + password (hashed with
   bcrypt), or **Sign in with Google**. Sessions use a JWT.
 - **Remember me** — a checkbox on the login form controls whether your
   session survives closing the browser (stored in `localStorage`) or
   ends with the tab (stored in `sessionStorage`).
-- **Today dashboard, task manager, focus timer, inbox scan** — same
-  features as before, now living at `/app`, `/app/tasks`, `/app/focus`,
-  `/app/inbox`, all backed by the Express API.
+- **No fake sample data** — new accounts start empty. The Dashboard,
+  Tasks, and Inbox pages point you at the Connections tab (or manual
+  task entry) instead of showing placeholder rows.
+- **Preferences** — click your name at the bottom of the nav rail. Six
+  working themes (Paper, Dark, Cream, Forest, Tomorrow Night, Cyberpunk)
+  that actually swap the app's colors live, plus density and reduced-motion
+  controls, a real sound + browser notification when a focus session ends,
+  a default session length, data export (JSON download), and account
+  deletion — all functional, not just UI mockups. A couple of items
+  (email digest, auto-start breaks) are visibly marked "coming soon"
+  since they need infrastructure that isn't built yet.
+- **Today dashboard, task manager, focus timer, inbox scan, Connections**
+  — same core features as before, all backed by the Express API.
+
+### A note on the Connections page crash
+
+If you hit a blank/broken page opening Connections before, the cause was
+a missing null-check: if the status request failed for any reason, the
+page tried to read properties off a `null` value and crashed React
+entirely. That's fixed, and there's now an app-wide error boundary so any
+future bug shows a recoverable error screen instead of a blank page.
 
 ### Setting up Google Sign-In vs. Google Calendar/Gmail
 
@@ -134,16 +152,19 @@ with a personal access token. In Canvas: Account → Settings → scroll to
 | `/api/integrations/google/callback` | GET | Google redirects here after consent |
 | `/api/integrations/google` | DELETE | Disconnect Google Calendar/Gmail |
 | `/api/integrations/calendar/events` | GET | Upcoming events from Google Calendar |
+| `/api/me` | DELETE | Permanently delete your account and all its data |
 
 All routes except `/auth/*`, `/api/health`, and the two OAuth redirect
 routes require `Authorization: Bearer <token>`.
 
 **Security notes for going further:** the JWT lives in browser storage,
 fine for a student project but vulnerable to XSS in a public deployment —
-a production version should move to an httpOnly cookie. `JWT_SECRET` in
-`.env` should be a long random value in any real deployment, never the
-placeholder. The JSON-file store (`server/ledger.json`) has no
-concurrent-write protection — fine at small scale, but swap in a real
+a production version should move to an httpOnly cookie. `JWT_SECRET` and
+`GOOGLE_CLIENT_SECRET` in `.env` must never be committed or shared —
+treat them like passwords. If one is ever exposed (pasted somewhere,
+committed by accident), rotate it immediately in Google Cloud Console /
+regenerate `JWT_SECRET`. The JSON-file store (`server/ledger.json`) has
+no concurrent-write protection — fine at small scale, but swap in a real
 database before this serves many simultaneous users.
 
 ## Roadmap

@@ -36,7 +36,13 @@ export default function Inbox() {
       )}
 
       <div className="ruled-list">
-        {inbox.length === 0 && <p className="empty-note">Inbox clear.</p>}
+        {inbox.length === 0 && !isLive && (
+          <p className="empty-note">
+            No mail to show yet. <Link to="/app/connections">Connect Gmail</Link> on the
+            Connections tab to scan your real inbox.
+          </p>
+        )}
+        {inbox.length === 0 && isLive && <p className="empty-note">Inbox clear.</p>}
         {inbox.map((mail) => {
           const scored = mail.reasons
             ? { reasons: mail.reasons, suspicious: mail.flag === "suspicious" }

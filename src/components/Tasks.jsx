@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
 import TaskRow from "./TaskRow";
 
 const FILTERS = ["all", "todo", "doing", "done"];
@@ -54,6 +54,13 @@ export default function Tasks() {
         </div>
       </div>
 
+      {tasks.length === 0 && (
+        <div className="callout">
+          No tasks yet. <Link to="/app/connections">Connect Canvas</Link> to pull in real
+          assignments automatically, or add one by hand below.
+        </div>
+      )}
+
       <form className="add-task-form" onSubmit={handleSubmit}>
         <input
           type="text"
@@ -78,7 +85,7 @@ export default function Tasks() {
       </form>
 
       <div className="ruled-list">
-        {visible.length === 0 && <p className="empty-note">Nothing here yet.</p>}
+        {visible.length === 0 && tasks.length > 0 && <p className="empty-note">Nothing matches this filter.</p>}
         {visible.map((t) => (
           <TaskRow key={t.id} task={t} onCycle={cycleStatus} onDelete={deleteTask} />
         ))}

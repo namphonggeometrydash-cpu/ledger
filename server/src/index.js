@@ -37,6 +37,11 @@ app.get("/api/me", requireAuth, (req, res) => {
   res.json({ id: user.id, email: user.email, name: user.name });
 });
 
+app.delete("/api/me", requireAuth, (req, res) => {
+  db.deleteUser(req.userId);
+  res.status(204).end();
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/sessions", sessionRoutes);

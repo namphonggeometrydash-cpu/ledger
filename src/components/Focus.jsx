@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
+import { usePreferences } from "../context/PreferencesContext";
 
 const LENGTHS = [
   { label: "25 min", mins: 25 },
@@ -12,9 +13,10 @@ const CIRC = 2 * Math.PI * RADIUS;
 
 export default function Focus() {
   const data = useOutletContext();
+  const { prefs, playTestSound } = usePreferences();
   const { logSession, sessions, goals, weekMinutes } = data;
-  const [lengthMins, setLengthMins] = useState(25);
-  const [secondsLeft, setSecondsLeft] = useState(25 * 60);
+  const [lengthMins, setLengthMins] = useState(prefs.defaultFocusLength);
+  const [secondsLeft, setSecondsLeft] = useState(prefs.defaultFocusLength * 60);
   const [running, setRunning] = useState(false);
   const intervalRef = useRef(null);
 
@@ -26,13 +28,19 @@ export default function Focus() {
           clearInterval(intervalRef.current);
           setRunning(false);
           logSession(lengthMins);
+          if (prefs.soundOnComplete) playTestSound();
+          if (prefs.browserNotifications && "Notification" in window && Notification.permission === "granted") {
+            new Notification("Focus session complete", {
+              body: `Nice work — you finished a ${lengthMins} minute block.`,
+            });
+          }
           return lengthMins * 60;
         }
         return s - 1;
       });
     }, 1000);
     return () => clearInterval(intervalRef.current);
-  }, [running, lengthMins, logSession]);
+  }, [running, lengthMins, logSession, prefs.soundOnComplete, prefs.browserNotifications, playTestSound]);
 
   function selectLength(mins) {
     if (running) return;

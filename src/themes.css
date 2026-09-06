@@ -1,0 +1,95 @@
+/* Each theme only needs to override the tokens defined in :root inside
+   index.css. Adding a new theme = adding one more block here plus an
+   entry in the THEMES list in PreferencesContext.jsx. */
+
+:root[data-theme="dark"] {
+  --paper: #15181a;
+  --paper-raised: #1c2023;
+  --ink: #edf0ec;
+  --ink-soft: #a7afa6;
+  --ink-faint: #6d746c;
+  --line: #2b302c;
+  --line-strong: #3c423d;
+  --amber: #e0a352;
+  --amber-soft: #3a2c17;
+  --moss: #82ab7b;
+  --moss-soft: #223423;
+  --rust: #dd8871;
+  --rust-soft: #3a241d;
+}
+
+:root[data-theme="cream"] {
+  --paper: #f7f1e3;
+  --paper-raised: #fffaf0;
+  --ink: #3b2f22;
+  --ink-soft: #6b5c4a;
+  --ink-faint: #a08f76;
+  --line: #e6d9bd;
+  --line-strong: #d3c19a;
+  --amber: #b5762c;
+  --amber-soft: #f0dcb8;
+  --moss: #5f7a4f;
+  --moss-soft: #e2ead4;
+  --rust: #a1503a;
+  --rust-soft: #f0d9cd;
+}
+
+:root[data-theme="forest"] {
+  --paper: #eef2ea;
+  --paper-raised: #f6f8f4;
+  --ink: #1d2b1a;
+  --ink-soft: #4b5c46;
+  --ink-faint: #84927e;
+  --line: #d3ddca;
+  --line-strong: #b7c6ab;
+  --amber: #c4802e;
+  --amber-soft: #f0dcc0;
+  --moss: #3f7a4a;
+  --moss-soft: #d7ecd9;
+  --rust: #a14a35;
+  --rust-soft: #f0d6cc;
+}
+
+:root[data-theme="tomorrow-night"] {
+  --paper: #1d1f21;
+  --paper-raised: #25272a;
+  --ink: #c5c8c6;
+  --ink-soft: #97999a;
+  --ink-faint: #707374;
+  --line: #373b41;
+  --line-strong: #4f5357;
+  --amber: #de935f;
+  --amber-soft: #2e2419;
+  --moss: #b5bd68;
+  --moss-soft: #2a2c1c;
+  --rust: #cc6666;
+  --rust-soft: #2e1c1c;
+}
+
+:root[data-theme="cyberpunk"] {
+  --paper: #0b0716;
+  --paper-raised: #150b26;
+  --ink: #f2e9ff;
+  --ink-soft: #b79ee0;
+  --ink-faint: #7a6699;
+  --line: #2e1f4d;
+  --line-strong: #472e73;
+  --amber: #ff2e88;
+  --amber-soft: #3a1030;
+  --moss: #26f0d0;
+  --moss-soft: #0e2f2c;
+  --rust: #ffb020;
+  --rust-soft: #3a2708;
+}
+
+/* Font-size scale, controlled by preferences rather than a theme. */
+:root[data-density="compact"] {
+  font-size: 13.5px;
+}
+
+/* Explicit override that always wins, on top of the OS-level
+   prefers-reduced-motion query already handled in index.css. */
+:root[data-reduce-motion="true"] * {
+  animation-duration: 0.001ms !important;
+  transition-duration: 0.001ms !important;
+}

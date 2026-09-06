@@ -25,7 +25,7 @@ function verifyState(state) {
   return payload.userId;
 }
 
-function buildAuthUrl(userId) {
+function buildAuthUrl(userId, { loginHint } = {}) {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const params = new URLSearchParams({
     client_id: clientId,
@@ -33,9 +33,13 @@ function buildAuthUrl(userId) {
     response_type: "code",
     scope: SCOPES.join(" "),
     access_type: "offline",
-    prompt: "consent",
+    // Forcing the account chooser when there's no hint mirrors Google's own
+    // "choose an account" screen; a hint skips straight to consent for that
+    // specific address.
+    prompt: loginHint ? "consent" : "select_account consent",
     state: signState(userId),
   });
+  if (loginHint) params.set("login_hint", loginHint);
   return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
 }
 

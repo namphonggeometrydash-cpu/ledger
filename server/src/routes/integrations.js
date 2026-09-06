@@ -83,7 +83,7 @@ router.post("/canvas/sync", requireAuth, async (req, res) => {
 // attach an Authorization header to a browser navigation), so the JWT is
 // passed as a query param instead and verified manually.
 router.get("/google/start", (req, res) => {
-  const { token } = req.query;
+  const { token, hint } = req.query;
   if (!token) return res.status(401).send("Missing token");
   let userId;
   try {
@@ -91,7 +91,7 @@ router.get("/google/start", (req, res) => {
   } catch {
     return res.status(401).send("Invalid or expired session — please sign in again and retry.");
   }
-  res.redirect(google.buildAuthUrl(userId));
+  res.redirect(google.buildAuthUrl(userId, { loginHint: hint || undefined }));
 });
 
 router.get("/google/callback", async (req, res) => {

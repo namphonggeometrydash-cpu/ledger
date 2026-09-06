@@ -86,7 +86,7 @@ export default function Login() {
     <div className="auth-screen">
       <div className="auth-card">
         <Link to="/" className="rail-mark" style={{ marginBottom: 24, textDecoration: "none" }}>
-          <span className="rail-mark-glyph">§</span>
+          <img src="/ledger-icon.png" alt="" className="rail-mark-icon" />
           <span className="rail-mark-word">Ledger</span>
         </Link>
         <h1 style={{ fontSize: 22, marginBottom: 6 }}>

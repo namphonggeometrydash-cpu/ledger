@@ -58,7 +58,18 @@ export default function Dashboard() {
             </button>
           </div>
           <div className="ruled-list">
-            {upNext.length === 0 && <p className="empty-note">Nothing urgent — nice work.</p>}
+            {upNext.length === 0 && data.tasks.length === 0 && (
+              <p className="empty-note">
+                No tasks yet.{" "}
+                <button className="linklike" onClick={() => navigate("/app/connections")} style={{ textDecoration: "underline" }}>
+                  Go to Connections
+                </button>{" "}
+                to connect Canvas, or add one on the Tasks tab.
+              </p>
+            )}
+            {upNext.length === 0 && data.tasks.length > 0 && (
+              <p className="empty-note">Nothing urgent — nice work.</p>
+            )}
             {upNext.map((t) => (
               <TaskRow key={t.id} task={t} onCycle={cycleStatus} />
             ))}

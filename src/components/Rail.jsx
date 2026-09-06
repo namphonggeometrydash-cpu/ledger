@@ -53,11 +53,11 @@ const NAV = [
   },
 ];
 
-export default function Rail({ user, onLogout }) {
+export default function Rail({ user, onOpenPreferences }) {
   return (
     <nav className="rail">
       <div className="rail-mark">
-        <span className="rail-mark-glyph">§</span>
+        <img src="/ledger-icon.png" alt="" className="rail-mark-icon" />
         <span className="rail-mark-word">Ledger</span>
       </div>
       <div className="rail-nav">
@@ -73,17 +73,15 @@ export default function Rail({ user, onLogout }) {
           </NavLink>
         ))}
       </div>
-      <div className="rail-foot">
-        {user && (
-          <>
-            Signed in as <strong style={{ color: "var(--ink-soft)" }}>{user.name}</strong>
-            <br />
-            <button className="linklike" style={{ marginTop: 6 }} onClick={onLogout}>
-              Sign out
-            </button>
-          </>
-        )}
-      </div>
+      {user && (
+        <button className="rail-user" onClick={onOpenPreferences}>
+          <span className="rail-user-avatar">{user.name?.[0]?.toUpperCase() || "?"}</span>
+          <span className="rail-user-info">
+            <strong>{user.name}</strong>
+            <span>Preferences</span>
+          </span>
+        </button>
+      )}
     </nav>
   );
 }

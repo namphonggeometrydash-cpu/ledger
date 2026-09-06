@@ -56,6 +56,7 @@ export const api = {
   login: (data) => request("/auth/login", { method: "POST", body: JSON.stringify(data) }),
   google: (idToken) => request("/auth/google", { method: "POST", body: JSON.stringify({ idToken }) }),
   me: () => request("/me"),
+  deleteAccount: () => request("/me", { method: "DELETE" }),
 
   tasks: {
     list: () => request("/tasks"),
@@ -80,7 +81,11 @@ export const api = {
       request("/integrations/canvas", { method: "POST", body: JSON.stringify({ domain, token: canvasToken }) }),
     disconnectCanvas: () => request("/integrations/canvas", { method: "DELETE" }),
     syncCanvas: () => request("/integrations/canvas/sync", { method: "POST" }),
-    googleStartUrl: () => `${BASE_URL}/integrations/google/start?token=${encodeURIComponent(token || "")}`,
+    googleStartUrl: (hint) => {
+      const params = new URLSearchParams({ token: token || "" });
+      if (hint) params.set("hint", hint);
+      return `${BASE_URL}/integrations/google/start?${params.toString()}`;
+    },
     disconnectGoogle: () => request("/integrations/google", { method: "DELETE" }),
     calendarEvents: () => request("/integrations/calendar/events"),
   },
